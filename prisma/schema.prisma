@@ -12,7 +12,27 @@ datasource db {
   provider = "mysql"
 }
 
-model user {
-  id   String @id @default(ulid())
-  name String @db.VarChar(100)
+model Client {
+  id               String @id @default(ulid()) @db.Char(26) // client_id
+  clientSecretHash String @map("client_secret_hash") @db.Char(64) // sha256 로 해시화된 client_secret
+  name             String @db.VarChar(100) // 서비스 이름
+
+  accessTokens AccessToken[]
+
+  @@map("clients")
+}
+
+/**
+ * 클라이언트는 동시에 여러개의 AccessToken 을 활성화할 수 있다. 토큰은 기본 50년이며, 만료되거나 유저가 비활성화할 때까지 유효하다.
+ */
+model AccessToken {
+  id        String    @id @default(ulid()) @db.Char(26)
+  tokenHash String    @map("token_hash") @db.Char(64) // sha256 로 해시화된 access_token
+  revokedAt DateTime? @map("revoked_at") @db.DateTime(3) // 유저의 토큰 폐기
+  expiresAt DateTime  @map("expires_at") @db.DateTime(3)
+
+  clientId String @map("client_id") @db.Char(26)
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("access_tokens")
 }

@@ -23,6 +23,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/app/*": ["src/app/*"],
+      "@/config/*": ["src/config/*"],
       "@/prisma/*": ["prisma/generated/prisma/*"],
       "@/module/*": ["src/module/*"],
       "@/lib/*": ["src/lib/*"],
