@@ -8,6 +8,7 @@ import { toHash } from '@/common/util/hash';
 import { SignupResponse } from '@/module/oauth/type/signup-response.type';
 import { ulid } from 'ulid';
 import { SignupDto } from '@/module/oauth/dto/signup.dto';
+import { decodeBasicToken } from '@/common/util/decode-auth-token';
 
 @Injectable()
 export class OauthService {
@@ -17,9 +18,8 @@ export class OauthService {
   ) {}
 
   async getAccessToken(token: string): Promise<GetAccessTokenResponse> {
-    const [clientId, clientSecret] = Buffer.from(token, 'base64')
-      .toString('utf-8')
-      .split(':');
+    const { clientId, clientSecret } = decodeBasicToken(token);
+
     const client: Client | null = await this.repository.getClientById(clientId);
     if (!client || toHash(clientSecret) !== client.clientSecretHash)
       throw new UnauthorizedException('Client does not exist');
