@@ -13,7 +13,7 @@ import { jwtConfig } from '@/config/namespace/jwt.config';
         DATABASE_URL: Joi.string()
           .uri({ scheme: ['mysql'] })
           .required(),
-        JWT_SECRET: Joi.string().length(3).required(),
+        JWT_SECRET: Joi.string().required(),
         JWT_EXPIRES_IN: Joi.string().pattern(/^\d+([yMdhms])$/),
       }),
     }),
